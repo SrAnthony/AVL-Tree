@@ -5,53 +5,68 @@
 
 void debug(const char prefix[], node *debugNode){
 		printf("\n%s\n", prefix);
-		printf("Node ID: %d\nRight: %p\nLeft: %p\n---------\n\n", debugNode->id, debugNode->right, debugNode->left);
+		printf("Node Data: %d\nRight: %p\nLeft: %p\n---------\n\n", debugNode->data, debugNode->right, debugNode->left);
 }
 
 node* createNode(){
-		// Creates a new node with user input ID
+		// Creates a new node with user input data
 		node *newNode = (node*)calloc(1, sizeof(node));
 		printf("Tell me a number: ");
-		scanf("%d", &newNode->id);
+		scanf("%d", &newNode->data);
 
 		debug("Created node", newNode);
 		return newNode;
 }
 
 void addNode(node *root, node *toAdd){
-		int toAddID = toAdd->id;
-		int rootID = root->id;
-		printf("Adding node %d into the root %d\n", toAddID, rootID);
 
-		if (toAddID == rootID) {
-				printf("The node you're trying to add (%d) is already on the tree!\n", toAddID);
+		if (toAdd->data == root->data) {
+				printf("Adding: already on the tree!\n");
 		}
-		else if (toAddID > rootID) {
+		else if (toAdd->data > root->data) {
+				/*DEBUG*/ printf("Adding: else if %d > %d\n", toAdd->data, root->data);
 				if (root->right != NULL) {
-						printf("Node %d is bigger than root %d, root->right is not NULL\n", toAddID, rootID);
 						addNode(root->right, toAdd);
 				}
 				else {
-						printf("Node %d is bigger than root %d, root->right IS NULL\n", toAddID, rootID);
-						root->right = toAdd;
+						root->right = toAdd; // If right is NULL then toAdd is added to it
 				}
+
+				// Increments the height of the node
+				if(root->right->l_height > root->right->r_height)
+						root->r_height = root->right->l_height + 1;
+				else
+						root->r_height = root->right->r_height + 1;
 		}
-		else { //if (toAddID < rootID)
+		else { //if (toAdd->data < root->data)
+				/*DEBUG*/ printf("Adding: else %d < %d\n", toAdd->data, root->data);
 				if (root->left != NULL) {
-						printf("Node %d is smaller than root %d, root->left is not NULL\n", toAddID, rootID);
 						addNode(root->left, toAdd);
 				}
 				else {
-						printf("Node %d is smaller than root %d, root->left IS NULL\n", toAddID, rootID);
-						root->left = toAdd;
+						root->left = toAdd; // If left is NULL then toAdd is added to it
 				}
+
+				// Increments the height of the node
+				if(root->left != NULL){
+						if(root->left->l_height > root->left->r_height)
+								root->l_height = root->left->l_height + 1;
+						else
+								root->l_height = root->left->r_height + 1;
+				}
+		}
+
+		// After adding the node and increasing the height
+		root->bf = root->l_height - root->r_height;
+		if(root->bf < -1 || root->bf > 1){
+        printf("Node %d unbalanced (factor of %d)\n", root->data, root->bf);
 		}
 }
 
 int main() {
-		// Creates the main tree with initial ID
+		// Creates the main tree with initial Data
 		node *root = (node*)calloc(1, sizeof(node));
-		root->id = 10;
+		root->data = 10;
 
 		int option = -1;
 		while(option != 0) {

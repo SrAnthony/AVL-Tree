@@ -1,11 +1,11 @@
 int _print_t(node *tree, int is_left, int offset, int depth, char s[20][255])
 {
         char b[20];
-        int width = 5;
+        int width = 9;
 
         if (!tree) return 0;
 
-        sprintf(b, "(%03d)", tree->id);
+        sprintf(b, "(%01d|%03d|%01d)", tree->l_height, tree->data, tree->r_height);
 
         int left  = _print_t(tree->left,  1, offset,                depth + 1, s);
         int right = _print_t(tree->right, 0, offset + left + width, depth + 1, s);
