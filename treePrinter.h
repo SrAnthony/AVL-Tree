@@ -1,4 +1,4 @@
-int _print_t(node *tree, int is_left, int offset, int depth, char s[20][255])
+int _print_t(avl_node *tree, int is_left, int offset, int depth, char s[20][255])
 {
         char b[20];
         int width = 9;
@@ -53,7 +53,7 @@ int _print_t(node *tree, int is_left, int offset, int depth, char s[20][255])
         return left + width + right;
 }
 
-void print_t(node *tree)
+void print_t(avl_node *tree)
 {
         printf("\n");
         char s[20][255];
