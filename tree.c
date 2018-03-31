@@ -27,14 +27,14 @@ void calc_height(avl_node *node){
 void rotationSimpleLeft(avl_node *node){
 		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
-		avl_node *newRoot = node->right;
+		avl_node *pivot = node->right;
 		if(node->position == 0) // 0 is right
-				node->root->right = newRoot;
+				node->root->right = pivot;
 		else // if not 0 then 1, is left
-				node->root->left = newRoot;
-		newRoot->root = node->root;
-		newRoot->left = node;
-		node->root = newRoot;
+				node->root->left = pivot;
+		pivot->root = node->root;
+		pivot->left = node;
+		node->root = pivot;
 		node->right = NULL;
 		// To fix the height
 		node->r_height = 0;
@@ -44,25 +44,41 @@ void rotationSimpleLeft(avl_node *node){
 void rotationSimpleRight(avl_node *node){
 		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
-		avl_node *newRoot = node->left;
+		avl_node *pivot = node->left;
 		if(node->position == 0) // 0 is right
-				node->root->right = newRoot;
+				node->root->right = pivot;
 		else // if not 0 then 1, is left
-				node->root->left = newRoot;
-		newRoot->root = node->root;
-		newRoot->right = node;
-		node->root = newRoot;
+				node->root->left = pivot;
+		pivot->root = node->root;
+		pivot->right = node;
+		node->root = pivot;
 		node->left = NULL;
 		// To fix the height
 		node->l_height = 0;
 }
+// When LeftRight
 void rotationDoubleRight(avl_node *node){
 		printf("[INFO] Double rotation to the right on node %d...\n", node->data);
-
+		avl_node *pivot = node->left->right;
+		pivot->l_height = 1;
+		node->left->r_height = 0;
+		pivot->left = node->left;
+		node->left->right = NULL;
+		node->left = pivot;
+		rotationSimpleRight(node);
 }
+// When RightLeft
 void rotationDoubleLeft(avl_node *node){
 		printf("[INFO] Double rotation to the left on node %d...\n", node->data);
+		avl_node *pivot = node->right->left;
+		pivot->r_height = 1;
+		node->right->l_height = 0;
+		pivot->right = node->right;
+		node->right->left = NULL;
+		node->right = pivot;
+		rotationSimpleLeft(node);
 }
+
 void rebalance(avl_node *node){
 
 	switch (node->bf) {
