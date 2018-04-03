@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "tree.h"
 #include "treePrinter.h"
+#include "avlTreePrinter.h"
 
 void calc_height(avl_node *node){
 	if(node != NULL){
@@ -129,6 +130,7 @@ void addNode(avl_node *node, avl_node *toAdd){
 						node->right = toAdd; // If right is NULL then toAdd is added to it
 						toAdd->position = 0; // Position 0 = right, 1 = left
 						toAdd->root = node; // node is toAdd's father
+						printf("[INFO] Added on %d's right side\n", node->data);
 				}
 				else {
 						addNode(node->right, toAdd);
@@ -140,6 +142,7 @@ void addNode(avl_node *node, avl_node *toAdd){
 						node->left = toAdd; // If left is NULL then toAdd is added to it
 						toAdd->position = 1; // Position 0 = right, 1 = left
 						toAdd->root = node; // node is toAdd's father
+						printf("[INFO] Added on %d's left side\n", node->data);
 				}
 				else {
 						addNode(node->left, toAdd);
@@ -153,14 +156,20 @@ void addNode(avl_node *node, avl_node *toAdd){
 		rebalance(node);
 }
 
-int main() {
-		avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
-		root->root = root; // Tree root is itself, just in case
-		root->data = 10;
+avl_node* startup(){
+	avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
+	root->root = root; // Tree root is itself, just in case
+	printf("[USER] Number to tree root ");
+	scanf("%d", &root->data);
+	return root;
+}
 
-		int option = -1;
-		while(option != 0) {
-				print_t(root);
+int main() {
+		avl_node *root = startup();
+		int option;
+		do{
+				int lvl = root->l_height > root->r_height ? root->l_height : root->r_height;
+				structure(root, lvl);
 				printf("\n\n------------\nChoose a option:\n");
 				printf("1. Add a new node\n");
         printf("0. Exit\n");
@@ -171,6 +180,6 @@ int main() {
 						addNode(root, createNode());
 						break;
 				}
-		}
+		}while(option != 0);
 		return 0;
 }
