@@ -5,21 +5,16 @@
 
 void calc_height(avl_node *node){
 	if(node != NULL){
-			calc_height(node->left);
-			calc_height(node->right);
+			avl_node* right = node->right;
+			avl_node* left = node->left;
+
 			// Increments the height of the node
-			if(node->right != NULL){
-					if(node->right->l_height > node->right->r_height)
-							node->r_height = node->right->l_height + 1;
-					else
-							node->r_height = node->right->r_height + 1;
-			}
-			if(node->left != NULL){
-					if(node->left->l_height > node->left->r_height)
-							node->l_height = node->left->l_height + 1;
-					else
-							node->l_height = node->left->r_height + 1;
-			}
+			if(node->right != NULL)
+					node->r_height = right->l_height > right->r_height ? right->l_height+1 : right->r_height+1;
+
+			if(node->left != NULL)
+					node->l_height = left->l_height > left->r_height ? left->l_height+1 : left->r_height+1;
+
 			// Defines the node's balance factor
 			node->bf = node->l_height - node->r_height;
 	}
@@ -27,7 +22,6 @@ void calc_height(avl_node *node){
 
 // When RightRight
 avl_node* rotationSimpleLeft(avl_node *node){
-		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
 		avl_node *pivot = node->right;
 		avl_node *rot_root = node->root;
@@ -43,7 +37,7 @@ avl_node* rotationSimpleLeft(avl_node *node){
 		else if(node->position == 1) // 1 is left
 				rot_root->left = pivot;
 		else{ // Then position == 3, is the main root
-				printf("[INFO] Hey, %d is the main root!\n", node->data);
+				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
@@ -54,11 +48,10 @@ avl_node* rotationSimpleLeft(avl_node *node){
 }
 // When LeftLeft
 avl_node* rotationSimpleRight(avl_node *node){
-		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
 		avl_node *pivot = node->left;
 		avl_node *rot_root = node->root;
-		
+
 		pivot->root = node->root;
 		node->root = pivot;
 		node->left = pivot->right;
@@ -70,7 +63,7 @@ avl_node* rotationSimpleRight(avl_node *node){
 		else if(node->position == 1) // 1 is left
 				rot_root->left = pivot;
 		else{ // Then position == 3, is the main root
-				printf("[INFO] Hey, %d is the main root!\n", node->data);
+				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
