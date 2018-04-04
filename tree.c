@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tree.h"
-#include "treePrinter.h"
 #include "avlTreePrinter.h"
 
 void calc_height(avl_node *node){
@@ -21,28 +20,40 @@ void calc_height(avl_node *node){
 					else
 							node->l_height = node->left->r_height + 1;
 			}
+			// Defines the node's balance factor
+			node->bf = node->l_height - node->r_height;
 	}
 }
 
 // When RightRight
-void rotationSimpleLeft(avl_node *node){
+avl_node* rotationSimpleLeft(avl_node *node){
 		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
 		avl_node *pivot = node->right;
-		if(node->position == 0) // 0 is right
-				node->root->right = pivot;
-		else // if not 0 then 1, is left
-				node->root->left = pivot;
+		avl_node *rot_root = node->root;
 		pivot->root = node->root;
-		pivot->left = node;
 		node->root = pivot;
-		node->right = NULL;
+		node->right = pivot->left;
+		pivot->left = node;
 		// To fix the height
 		node->r_height = 0;
 
+		if(node->position == 0) // 0 is right
+				rot_root->right = pivot;
+		else if(node->position == 1) // 1 is left
+				rot_root->left = pivot;
+		else{ // Then position == 3, is the main root
+				printf("[INFO] Hey, %d is the main root!\n", node->data);
+				pivot->root = pivot; // Is itself
+				pivot->position = 3;
+				node->position = 1; // Node is on left side of pivot
+				return pivot;
+		}
+		return node;
+
 }
 // When LeftLeft
-void rotationSimpleRight(avl_node *node){
+avl_node* rotationSimpleRight(avl_node *node){
 		// TODO: Don't work if this node is the tree root
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
 		avl_node *pivot = node->left;
@@ -56,9 +67,10 @@ void rotationSimpleRight(avl_node *node){
 		node->left = NULL;
 		// To fix the height
 		node->l_height = 0;
+		return node;
 }
 // When LeftRight
-void rotationDoubleRight(avl_node *node){
+avl_node* rotationDoubleRight(avl_node *node){
 		printf("[INFO] Double rotation to the right on node %d...\n", node->data);
 		avl_node *pivot = node->left->right;
 		pivot->l_height = 1;
@@ -66,10 +78,10 @@ void rotationDoubleRight(avl_node *node){
 		pivot->left = node->left;
 		node->left->right = NULL;
 		node->left = pivot;
-		rotationSimpleRight(node);
+		return rotationSimpleRight(node);
 }
 // When RightLeft
-void rotationDoubleLeft(avl_node *node){
+avl_node* rotationDoubleLeft(avl_node *node){
 		printf("[INFO] Double rotation to the left on node %d...\n", node->data);
 		avl_node *pivot = node->right->left;
 		pivot->r_height = 1;
@@ -77,36 +89,37 @@ void rotationDoubleLeft(avl_node *node){
 		pivot->right = node->right;
 		node->right->left = NULL;
 		node->right = pivot;
-		rotationSimpleLeft(node);
+		return rotationSimpleLeft(node);
 }
 
-void rebalance(avl_node *node){
+avl_node* rebalance(avl_node *node){
 
-	switch (node->bf) {
-			// Quando a diferença das alturas dos filhos de nodo é igual a 2...
-			case 2:
-					printf("[INFO] Rebalancing right node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
-					// e a diferença das alturas dos filhos de FE (filho a esquerda) é igual a 1
-					// é executado a rotação simples a direita
-					if(node->left->bf == 1)
-						rotationSimpleRight(node);
-					// e a diferença das alturas dos filhos de FE é igual a -1
-					// é executado a rotação dupla a direita
-					else if(node->left->bf == -1)
-						rotationDoubleRight(node);
-					break;
-			case -2:
-					printf("[INFO] Rebalancing left node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
-					// e a diferença das alturas dos filhos de FD (filho a direita) é igual a -1
-					// é executado a rotação simples a esquerda
-					if(node->right->bf == -1)
-						rotationSimpleLeft(node);
-					// e a diferença das alturas dos filhos de FD é igual a 1
-					// é executado a rotação dupla a esquerda
-					else if(node->right->bf == 1)
-						rotationDoubleLeft(node);
-					break;
-	}
+		switch (node->bf) {
+				// Quando a diferença das alturas dos filhos de nodo é igual a 2...
+				case 2:
+						printf("[INFO] Rebalancing right node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
+						// e a diferença das alturas dos filhos de FE (filho a esquerda) é igual a 1
+						// é executado a rotação simples a direita
+						if(node->left->bf == 1)
+								return rotationSimpleRight(node);
+						// e a diferença das alturas dos filhos de FE é igual a -1
+						// é executado a rotação dupla a direita
+						else if(node->left->bf == -1)
+								return rotationDoubleRight(node);
+						break;
+				case -2:
+						printf("[INFO] Rebalancing left node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
+						// e a diferença das alturas dos filhos de FD (filho a direita) é igual a -1
+						// é executado a rotação simples a esquerda
+						if(node->right->bf == -1)
+								return rotationSimpleLeft(node);
+						// e a diferença das alturas dos filhos de FD é igual a 1
+						// é executado a rotação dupla a esquerda
+						else if(node->right->bf == 1)
+								return rotationDoubleLeft(node);
+						break;
+		}
+		return node;
 }
 
 avl_node* createNode(){
@@ -119,10 +132,11 @@ avl_node* createNode(){
 		return newNode;
 }
 
-void addNode(avl_node *node, avl_node *toAdd){
+avl_node* addNode(avl_node *node, avl_node *toAdd){
 
 		if (toAdd->data == node->data) {
 				printf("[INFO] Adding: already on the tree!\n");
+				return node;
 		}
 		else if (toAdd->data > node->data) {
 				printf("[INFO] Adding: going right, %d > %d\n", toAdd->data, node->data);
@@ -149,19 +163,17 @@ void addNode(avl_node *node, avl_node *toAdd){
 				}
 		}
 
-		// Uses a recursive function to calculate the nodes height
 		calc_height(node);
-		// Defines the node's balance factor
-		node->bf = node->l_height - node->r_height;
-		rebalance(node);
+		return rebalance(node);
 }
 
 avl_node* startup(){
-	avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
-	root->root = root; // Tree root is itself, just in case
-	printf("[USER] Number to tree root ");
-	scanf("%d", &root->data);
-	return root;
+		avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
+		root->position = 3; // Is root
+		root->root = root; // Tree root is itself, just in case
+		printf("[USER] Number to tree root: ");
+		scanf("%d", &root->data);
+		return root;
 }
 
 int main() {
@@ -169,7 +181,7 @@ int main() {
 		int option;
 		do{
 				int lvl = root->l_height > root->r_height ? root->l_height : root->r_height;
-				structure(root, lvl);
+				printStructure(root, lvl);
 				printf("\n\n------------\nChoose a option:\n");
 				printf("1. Add a new node\n");
         printf("0. Exit\n");
@@ -177,7 +189,7 @@ int main() {
 				system("clear");
 				switch (option) {
 				case 1:
-						addNode(root, createNode());
+						root = addNode(root, createNode());
 						break;
 				}
 		}while(option != 0);
