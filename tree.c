@@ -10,7 +10,7 @@
 #include "avlTreePrinter.h"
 
 avl_node * calc_height(avl_node *node){
-		if(node != NULL){
+		if(node){
 				calc_height(node->left);
 				calc_height(node->right);
 
@@ -18,10 +18,10 @@ avl_node * calc_height(avl_node *node){
 				avl_node* left = node->left;
 
 				// Increments the height of the node
-				if(node->right != NULL)
+				if(node->right)
 						node->r_height = right->bf > 0 ? right->l_height+1 : right->r_height+1;
 
-				if(node->left != NULL)
+				if(node->left)
 						node->l_height = left->bf > 0 ? left->l_height+1 : left->r_height+1;
 
 				// Defines the node's balance factor
@@ -51,8 +51,10 @@ avl_node* rotationSimpleLeft(avl_node *node){
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
+				printf("[INFO] Calculating height after simple left rotating on root\n");
 				return calc_height(pivot);
 		}
+		printf("[INFO] Calculating height after simple left rotating\n");
 		return calc_height(node);
 }
 // When LeftLeft
@@ -76,12 +78,12 @@ avl_node* rotationSimpleRight(avl_node *node){
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
-				calc_height(pivot);
-				return pivot;
+				printf("[INFO] Calculating height after simple right rotating on root\n");
+				return calc_height(pivot);
 		}
 
-		calc_height(node);
-		return node;
+		printf("[INFO] Calculating height after simple right rotating\n");
+		return calc_height(node);
 }
 // When LeftRight
 avl_node* rotationDoubleRight(avl_node *node){
@@ -146,10 +148,10 @@ avl_node* createNode(){
 		return newNode;
 }
 
-avl_node* addNode(avl_node *node, avl_node *toAdd){
+avl_node* addNode(avl_node *tree_root, avl_node *node, avl_node *toAdd){
 
 		if (toAdd->data == node->data) {
-				printf("[INFO] Adding: already on the tree!\n");
+				printf("[INFO] The number %d is already on the tree!\n", toAdd->data);
 				return node;
 		}
 		else if (toAdd->data > node->data) {
@@ -158,10 +160,11 @@ avl_node* addNode(avl_node *node, avl_node *toAdd){
 						node->right = toAdd; // If right is NULL then toAdd is added to it
 						toAdd->position = 0; // Position 0 = right, 1 = left
 						toAdd->root = node; // node is toAdd's father
-						printf("[INFO] Added on %d's right side\n", node->data);
+						calc_height(tree_root);
+						printf("[INFO] Added on %d's right side, height updated\n", node->data);
 				}
 				else {
-						addNode(node->right, toAdd);
+						addNode(tree_root, node->right, toAdd);
 				}
 		}
 		else { //if (toAdd->data < node->data)
@@ -170,14 +173,13 @@ avl_node* addNode(avl_node *node, avl_node *toAdd){
 						node->left = toAdd; // If left is NULL then toAdd is added to it
 						toAdd->position = 1; // Position 0 = right, 1 = left
 						toAdd->root = node; // node is toAdd's father
-						printf("[INFO] Added on %d's left side\n", node->data);
+						calc_height(tree_root);
+						printf("[INFO] Added on %d's left side, height updated\n", node->data);
 				}
 				else {
-						addNode(node->left, toAdd);
+						addNode(tree_root, node->left, toAdd);
 				}
 		}
-
-		calc_height(node);
 		return rebalance(node);
 }
 
@@ -202,7 +204,7 @@ int main(void) {
 				system("clear");
 				switch (option) {
 				case 1:
-						root = addNode(root, createNode());
+						root = addNode(root, root, createNode());
 						break;
 				}
 		}while(option != 0);
