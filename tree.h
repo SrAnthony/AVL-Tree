@@ -1,3 +1,9 @@
+/*
+ *  ============================
+ *  Anthony Nadaletti
+ *  https://github.com/SrAnthony/AVL-Tree
+ *  ============================
+ */
 typedef struct avl_node {
     // bf = Balance Factor
     // position = where the node is localized

@@ -1,3 +1,10 @@
+/*
+ *  ============================
+ *  Daniweb.com | Developed by Narue
+ *  https://www.daniweb.com/programming/software-development/threads/146112/printing-a-binary-tree
+ *  ============================
+ */
+
 void padding ( char ch, int n ){
   for (int i = 0; i < n; i++ )
     putchar ( ch );
