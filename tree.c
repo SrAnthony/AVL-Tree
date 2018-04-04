@@ -10,6 +10,7 @@
 #include "avlTreePrinter.h"
 
 avl_node * calc_height(avl_node *node){
+		// TODO: it should run only on the side where the tree was rebalanced or added a new node
 		if(node){
 				calc_height(node->left);
 				calc_height(node->right);
