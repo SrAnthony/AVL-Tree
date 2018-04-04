@@ -3,21 +3,25 @@
 #include "tree.h"
 #include "avlTreePrinter.h"
 
-void calc_height(avl_node *node){
-	if(node != NULL){
-			avl_node* right = node->right;
-			avl_node* left = node->left;
+avl_node * calc_height(avl_node *node){
+		if(node != NULL){
+				calc_height(node->left);
+				calc_height(node->right);
 
-			// Increments the height of the node
-			if(node->right != NULL)
-					node->r_height = right->l_height > right->r_height ? right->l_height+1 : right->r_height+1;
+				avl_node* right = node->right;
+				avl_node* left = node->left;
 
-			if(node->left != NULL)
-					node->l_height = left->l_height > left->r_height ? left->l_height+1 : left->r_height+1;
+				// Increments the height of the node
+				if(node->right != NULL)
+						node->r_height = right->bf > 0 ? right->l_height+1 : right->r_height+1;
 
-			// Defines the node's balance factor
-			node->bf = node->l_height - node->r_height;
-	}
+				if(node->left != NULL)
+						node->l_height = left->bf > 0 ? left->l_height+1 : left->r_height+1;
+
+				// Defines the node's balance factor
+				node->bf = node->l_height - node->r_height;
+		}
+		return node;
 }
 
 // When RightRight
@@ -41,10 +45,9 @@ avl_node* rotationSimpleLeft(avl_node *node){
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
-				return pivot;
+				return calc_height(pivot);
 		}
-		return node;
-
+		return calc_height(node);
 }
 // When LeftLeft
 avl_node* rotationSimpleRight(avl_node *node){
@@ -67,8 +70,11 @@ avl_node* rotationSimpleRight(avl_node *node){
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
+				calc_height(pivot);
 				return pivot;
 		}
+
+		calc_height(node);
 		return node;
 }
 // When LeftRight
@@ -172,19 +178,18 @@ avl_node* addNode(avl_node *node, avl_node *toAdd){
 avl_node* startup(){
 		avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
 		root->position = 3; // Is root
-		root->root = root; // Tree root is itself, just in case
+		root->root = root; // Tree root is itself
 		printf("[USER] Number to tree root: ");
 		scanf("%d", &root->data);
 		return root;
 }
 
-int main() {
+int main(void) {
 		avl_node *root = startup();
 		int option;
 		do{
-				int lvl = root->l_height > root->r_height ? root->l_height : root->r_height;
-				printStructure(root, lvl);
-				printf("\n\n------------\nChoose a option:\n");
+				printStructure(root, 1);
+				printf("\n\n----------------\nChoose a option:\n");
 				printf("1. Add a new node\n");
         printf("0. Exit\n");
 				scanf("%d", &option);
