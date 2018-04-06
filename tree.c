@@ -32,7 +32,7 @@ avl_node * calc_height(avl_node *node){
 }
 
 // When RightRight
-avl_node* rotationSimpleLeft(avl_node *node){
+avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
 		avl_node *pivot = node->right;
 		avl_node *rot_root = node->root;
@@ -56,10 +56,10 @@ avl_node* rotationSimpleLeft(avl_node *node){
 				return calc_height(pivot);
 		}
 		printf("[INFO] Calculating height after simple left rotating\n");
-		return calc_height(node);
+		return calc_height(tree);
 }
 // When LeftLeft
-avl_node* rotationSimpleRight(avl_node *node){
+avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
 		avl_node *pivot = node->left;
 		avl_node *rot_root = node->root;
@@ -84,10 +84,10 @@ avl_node* rotationSimpleRight(avl_node *node){
 		}
 
 		printf("[INFO] Calculating height after simple right rotating\n");
-		return calc_height(node);
+		return calc_height(tree);
 }
 // When LeftRight
-avl_node* rotationDoubleRight(avl_node *node){
+avl_node* rotationDoubleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Double rotation to the right on node %d...\n", node->data);
 		avl_node *pivot = node->left->right;
 		pivot->l_height = 1;
@@ -95,10 +95,10 @@ avl_node* rotationDoubleRight(avl_node *node){
 		pivot->left = node->left;
 		node->left->right = NULL;
 		node->left = pivot;
-		return rotationSimpleRight(node);
+		return rotationSimpleRight(tree, node);
 }
 // When RightLeft
-avl_node* rotationDoubleLeft(avl_node *node){
+avl_node* rotationDoubleLeft(avl_node *tree, avl_node *node){
 		printf("[INFO] Double rotation to the left on node %d...\n", node->data);
 		avl_node *pivot = node->right->left;
 		pivot->r_height = 1;
@@ -106,34 +106,34 @@ avl_node* rotationDoubleLeft(avl_node *node){
 		pivot->right = node->right;
 		node->right->left = NULL;
 		node->right = pivot;
-		return rotationSimpleLeft(node);
+		return rotationSimpleLeft(tree, node);
 }
 
-avl_node* rebalance(avl_node *node){
+avl_node* rebalance(avl_node *tree, avl_node *node){
 
 		switch (node->bf) {
 				// Quando a diferença das alturas dos filhos de nodo é igual a 2...
 				case 2:
-						printf("[INFO] Rebalancing right node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
+						printf("[INFO] Rebalancing right node %d - l_height %d, r_height %d, bf %d\n", node->data, node->l_height, node->r_height, node->bf);
 						// e a diferença das alturas dos filhos de FE (filho a esquerda) é igual a 1
 						// é executado a rotação simples a direita
 						if(node->left->bf == 1)
-								return rotationSimpleRight(node);
+								return rotationSimpleRight(tree, node);
 						// e a diferença das alturas dos filhos de FE é igual a -1
 						// é executado a rotação dupla a direita
 						else if(node->left->bf == -1)
-								return rotationDoubleRight(node);
+								return rotationDoubleRight(tree, node);
 						break;
 				case -2:
-						printf("[INFO] Rebalancing left node %d - l_height %d, r_height %d\n", node->data, node->l_height, node->r_height);
+						printf("[INFO] Rebalancing left node %d - l_height %d, r_height %d, bf %d\n", node->data, node->l_height, node->r_height, node->bf);
 						// e a diferença das alturas dos filhos de FD (filho a direita) é igual a -1
 						// é executado a rotação simples a esquerda
 						if(node->right->bf == -1)
-								return rotationSimpleLeft(node);
+								return rotationSimpleLeft(tree, node);
 						// e a diferença das alturas dos filhos de FD é igual a 1
 						// é executado a rotação dupla a esquerda
 						else if(node->right->bf == 1)
-								return rotationDoubleLeft(node);
+								return rotationDoubleLeft(tree, node);
 						break;
 		}
 		return node;
@@ -181,7 +181,7 @@ avl_node* addNode(avl_node *tree_root, avl_node *node, avl_node *toAdd){
 						addNode(tree_root, node->left, toAdd);
 				}
 		}
-		return rebalance(node);
+		return rebalance(tree_root, node);
 }
 
 avl_node* startup(){
@@ -198,6 +198,8 @@ int main(void) {
 		avl_node *root = startup();
 		int option;
 		do{
+				printf("\n\t|-----------------------------------Nível-------------------------------------|\n");
+				printf("\t|--0--| |--1--| |--2--| |--3--| |--4--| |--5--| |--6--| |--7--| |--8--| |--9--|\n");
 				printStructure(root, 0);
 				printf("\n\n----------------\nChoose a option:\n");
 				printf("1. Add a new node\n");
