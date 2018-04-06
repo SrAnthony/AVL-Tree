@@ -190,6 +190,7 @@ avl_node* startup(){
 		root->root = root; // Tree root is itself
 		printf("[USER] Number to tree root: ");
 		scanf("%d", &root->data);
+		system("clear");
 		return root;
 }
 
@@ -197,7 +198,7 @@ int main(void) {
 		avl_node *root = startup();
 		int option;
 		do{
-				printStructure(root, 1);
+				printStructure(root, 0);
 				printf("\n\n----------------\nChoose a option:\n");
 				printf("1. Add a new node\n");
         printf("0. Exit\n");
