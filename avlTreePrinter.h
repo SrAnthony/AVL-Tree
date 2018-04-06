@@ -20,7 +20,7 @@ void printStructure ( struct avl_node *root, int level ){
     padding ( '\t', level+1 );
 
     int height = root->r_height > root->l_height ? root->r_height : root->l_height;
-    printf ( "(\x1b[1m%d\x1b[0m|h:%d)\n", root->data, height );
+    printf ( "(\x1b[1m%d\x1b[0m|h:%d)--------------------------------------------\n", root->data, height );
     // printf("(e:%d|%d|d:%d)\n", root->l_height, root->data, root->r_height);
     printStructure ( root->left, level + 1 );
   }

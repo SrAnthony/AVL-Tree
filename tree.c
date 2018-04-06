@@ -34,18 +34,26 @@ avl_node * calc_height(avl_node *node){
 // When RightRight
 avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
+		printStructure(tree, 0);
 		avl_node *pivot = node->right;
 		avl_node *rot_root = node->root;
 		pivot->root = node->root;
 		node->root = pivot;
 		node->right = pivot->left;
+		if(node->right){
+			node->right->root = node;
+			node->right->position = 0;
+		}
 		pivot->left = node;
 		// To fix the height
 		node->r_height = 0;
 
-		if(node->position == 0) // 0 is right
+		pivot->position = node->position;
+		node->position = 1;
+
+		if(pivot->position == 0) // 0 is right
 				rot_root->right = pivot;
-		else if(node->position == 1) // 1 is left
+		else if(pivot->position == 1) // 1 is left
 				rot_root->left = pivot;
 		else{ // Then position == 3, is the main root
 				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
@@ -61,38 +69,58 @@ avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 // When LeftLeft
 avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
+		printStructure(tree, 0);
 		avl_node *pivot = node->left;
 		avl_node *rot_root = node->root;
 
 		pivot->root = node->root;
 		node->root = pivot;
 		node->left = pivot->right;
+		if(node->left){
+			node->left->root = node;
+			node->left->position = 1;
+		}
 		pivot->right = node;
 		// To fix the height
 		node->l_height = 0;
-		if(node->position == 0) // 0 is right
+
+		pivot->position = node->position;
+		node->position = 0;
+
+		if(pivot->position == 0){ // 0 is right
+				printf("nodo %d posição 0\n", pivot->data);
 				rot_root->right = pivot;
-		else if(node->position == 1) // 1 is left
+		}
+		else if(pivot->position == 1){ // 1 is left
+				printf("nodo %d posição 1\n", pivot->data);
 				rot_root->left = pivot;
+		}
 		else{ // Then position == 3, is the main root
+				printf("nodo %d posição 3\n", pivot->data);
 				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
-				node->position = 1; // Node is on left side of pivot
+				node->position = 0; // Node is on right side of pivot
 				printf("[INFO] Calculating height after simple right rotating on root\n");
 				return calc_height(pivot);
 		}
-
+		printf("after simple rotation to right on node %d\n", node->data);
+		printStructure(tree, 0);
 		printf("[INFO] Calculating height after simple right rotating\n");
 		return calc_height(tree);
 }
 // When LeftRight
 avl_node* rotationDoubleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Double rotation to the right on node %d...\n", node->data);
+		printStructure(tree, 0);
 		avl_node *pivot = node->left->right;
 		pivot->l_height = 1;
 		node->left->r_height = 0;
 		pivot->left = node->left;
+		node->left->root = pivot;
+
+		node->left->position = pivot->position = 1;
+
 		node->left->right = NULL;
 		node->left = pivot;
 		return rotationSimpleRight(tree, node);
@@ -104,6 +132,10 @@ avl_node* rotationDoubleLeft(avl_node *tree, avl_node *node){
 		pivot->r_height = 1;
 		node->right->l_height = 0;
 		pivot->right = node->right;
+		node->right->root = pivot;
+
+		node->right->position = pivot->position = 0;
+
 		node->right->left = NULL;
 		node->right = pivot;
 		return rotationSimpleLeft(tree, node);
