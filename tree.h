@@ -3,7 +3,7 @@
  *  Anthony Nadaletti
  *  https://github.com/SrAnthony/AVL-Tree
  *  ============================
- 50, 40, 30, 45, 47, 55, 53, 56, 41, 42
+ *  Test numbers: 50, 40, 30, 45, 47, 55, 53, 56, 41, 42
  */
 typedef struct avl_node {
     // bf = Balance Factor

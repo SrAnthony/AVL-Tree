@@ -34,7 +34,6 @@ avl_node * calc_height(avl_node *node){
 // When RightRight
 avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
-		printStructure(tree, 0);
 		avl_node *pivot = node->right;
 		avl_node *rot_root = node->root;
 		pivot->root = node->root;
@@ -69,7 +68,6 @@ avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 // When LeftLeft
 avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
-		printStructure(tree, 0);
 		avl_node *pivot = node->left;
 		avl_node *rot_root = node->root;
 
@@ -88,15 +86,12 @@ avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		node->position = 0;
 
 		if(pivot->position == 0){ // 0 is right
-				printf("nodo %d posição 0\n", pivot->data);
 				rot_root->right = pivot;
 		}
 		else if(pivot->position == 1){ // 1 is left
-				printf("nodo %d posição 1\n", pivot->data);
 				rot_root->left = pivot;
 		}
 		else{ // Then position == 3, is the main root
-				printf("nodo %d posição 3\n", pivot->data);
 				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
 				pivot->root = pivot; // Is itself
 				pivot->position = 3;
@@ -104,15 +99,12 @@ avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 				printf("[INFO] Calculating height after simple right rotating on root\n");
 				return calc_height(pivot);
 		}
-		printf("after simple rotation to right on node %d\n", node->data);
-		printStructure(tree, 0);
 		printf("[INFO] Calculating height after simple right rotating\n");
 		return calc_height(tree);
 }
 // When LeftRight
 avl_node* rotationDoubleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Double rotation to the right on node %d...\n", node->data);
-		printStructure(tree, 0);
 		avl_node *pivot = node->left->right;
 		pivot->l_height = 1;
 		node->left->r_height = 0;
@@ -230,7 +222,7 @@ int main(void) {
 		avl_node *root = startup();
 		int option;
 		do{
-				printf("\n\t|-----------------------------------Nível-------------------------------------|\n");
+				printf("\n\t|------------------------------------Nível------------------------------------|\n");
 				printf("\t|--0--| |--1--| |--2--| |--3--| |--4--| |--5--| |--6--| |--7--| |--8--| |--9--|\n");
 				printStructure(root, 0);
 				printf("\n\n----------------\nChoose a option:\n");
