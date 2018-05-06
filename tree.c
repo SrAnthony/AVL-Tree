@@ -34,9 +34,10 @@ avl_node * calc_height(avl_node *node){
 // When RightRight
 avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the left on node %d...\n", node->data);
-		avl_node *pivot = node->right;
-		avl_node *rot_root = node->root;
-		pivot->root = node->root;
+		avl_node* pivot = node->right;
+		avl_node* rot_root = node->root;
+
+		pivot->root = rot_root;
 		node->root = pivot;
 		node->right = pivot->left;
 		if(node->right){
@@ -56,7 +57,6 @@ avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 				rot_root->left = pivot;
 		else{ // Then position == 3, is the main root
 				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
-				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 1; // Node is on left side of pivot
 				printf("[INFO] Calculating height after simple left rotating on root\n");
@@ -68,10 +68,10 @@ avl_node* rotationSimpleLeft(avl_node *tree, avl_node *node){
 // When LeftLeft
 avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		printf("[INFO] Simple rotation to the right on node %d...\n", node->data);
-		avl_node *pivot = node->left;
-		avl_node *rot_root = node->root;
+		avl_node* pivot = node->left;
+		avl_node* rot_root = node->root; // Can be NULL if node is the root
 
-		pivot->root = node->root;
+		pivot->root = rot_root;
 		node->root = pivot;
 		node->left = pivot->right;
 		if(node->left){
@@ -93,7 +93,6 @@ avl_node* rotationSimpleRight(avl_node *tree, avl_node *node){
 		}
 		else{ // Then position == 3, is the main root
 				printf("[INFO] Hey, %d is the new root!\n", pivot->data);
-				pivot->root = pivot; // Is itself
 				pivot->position = 3;
 				node->position = 0; // Node is on right side of pivot
 				printf("[INFO] Calculating height after simple right rotating on root\n");
@@ -211,7 +210,6 @@ avl_node* addNode(avl_node *tree_root, avl_node *node, avl_node *toAdd){
 avl_node* startup(){
 		avl_node *root = (avl_node*)calloc(1, sizeof(avl_node));
 		root->position = 3; // Is root
-		root->root = root; // Tree root is itself
 		printf("[USER] Number to tree root: ");
 		scanf("%d", &root->data);
 		system("clear");
@@ -222,7 +220,7 @@ int main(void) {
 		avl_node *root = startup();
 		int option;
 		do{
-				printf("\n\t|------------------------------------Nível------------------------------------|\n");
+				printf("\n\t|------------------------------------Level------------------------------------|\n");
 				printf("\t|--0--| |--1--| |--2--| |--3--| |--4--| |--5--| |--6--| |--7--| |--8--| |--9--|\n");
 				printStructure(root, 0);
 				printf("\n\n----------------\nChoose a option:\n");
