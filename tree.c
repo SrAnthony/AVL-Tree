@@ -230,7 +230,7 @@ int main(void) {
 				printf("\n\t|------------------------------------Level------------------------------------|\n");
 				printf("\t|--0--| |--1--| |--2--| |--3--| |--4--| |--5--| |--6--| |--7--| |--8--| |--9--|\n");
 				print_tree(root, 0);
-				printf("\n\n----------------\nChoose a option:\n");
+				printf("\n\n----------------\nChoose an option:\n");
 				printf("1. Add a new node\n");
         printf("0. Exit\n");
 				scanf("%d", &option);
